@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL TV Channels</title>
+	<link rel="stylesheet" href="style.css"> <!-- Link to style.css -->
+</head>
+<body>
+    <div class="container">
+        <!-- Left Side - Iframe -->
+        <div class="iframe-container">
+            <iframe id="channelFrame" src="https://cdn.stmify.com/embed-free.php?id=TSports_2" allowfullscreen></iframe>
+        </div>
+
+        <!-- Right Side - Controls -->
+        <div class="controls">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 id="channelTitle">Discovery</h2>
+                <button id="darkModeToggle">Dark Mode</button>
+            </div>
+            
+            <!-- Category Filter -->
+            <select id="categoryFilter" style="width: 100%; padding: 5px;">
+                <option value="All">All</option>
+                <option value="Science">Science</option>
+                <option value="News">News</option>
+                <option value="Sports">Sports</option>
+            </select>
+            
+            <!-- Search Filter -->
+            <input type="text" id="searchInput" placeholder="Search channels..." style="width: 100%; padding: 5px; margin-top: 10px;">
+            
+            <!-- Channel List -->
+            <div id="channelList" style="margin-top: 10px; max-height: 300px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <script>
+        const channels = [
+            { name: "TSports 2", url: "https://cdn.stmify.com/embed-free.php?id=TSports_2", category: "Sports" }
+        ];
+
+        const channelFrame = document.getElementById("channelFrame");
+        const channelTitle = document.getElementById("channelTitle");
+        const channelList = document.getElementById("channelList");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const searchInput = document.getElementById("searchInput");
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const body = document.body;
+
+        function loadChannels() {
+            channelList.innerHTML = "";
+            const searchValue = searchInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+
+            channels.forEach(channel => {
+                if ((selectedCategory === "All" || channel.category === selectedCategory) && channel.name.toLowerCase().includes(searchValue)) {
+                    const button = document.createElement("button");
+                    button.textContent = channel.name;
+                    button.className = "channel-button";
+                    button.onclick = function() {
+                        channelFrame.src = channel.url;
+                        channelTitle.textContent = channel.name;
+                        document.querySelectorAll(".channel-button").forEach(btn => btn.classList.remove("selected"));
+                        button.classList.add("selected");
+                    };
+                    channelList.appendChild(button);
+                }
+            });
+        }
+
+        searchInput.addEventListener("input", loadChannels);
+        categoryFilter.addEventListener("change", loadChannels);
+        darkModeToggle.addEventListener("click", function() {
+            body.classList.toggle("dark-mode");
+            darkModeToggle.textContent = body.classList.contains("dark-mode") ? "Light Mode" : "Dark Mode";
+        });
+
+        loadChannels();
+    </script>
+</body>
+</html>
